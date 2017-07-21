@@ -1,0 +1,163 @@
+﻿@{
+    Layout = null;
+}
+@model QACDLibrary.Models.CD
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Welcome To QA CD Library</title>
+    <meta name="description" content="QA CD Library App">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" />
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+
+</head>
+
+<body data-spy="scroll" data-target=".navbar" data-offset="50">
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="" class="navbar-brand" id="navBarBrand">QA CD Library</a>
+            </div>
+            <div>
+                <div class="collapse navbar-collapse tablecontainer" id="navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a class="popup" href="/home/insert/">Add CD</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="jumbotron" id="application_information">
+        <div class="container text-center">
+            <h1>QA Library App</h1>
+            <p class="text-justify">QA Library is an app where you will be able to get information about the various CD's such as their Artist Name, Album Name and Genre.</p>
+        </div>
+    </div>
+
+    <div class="container-fluid tablecontainer">
+        <div class="row col-lg-12">
+            <table id="myDatatable" class="table table-striped custab table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Artist Name</th>
+                        <th>Genre</th>
+                        <th>Album Name</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    
+
+
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            var oTable = $('#myDatatable').DataTable({
+                "ajax": {
+                    "url": '/home/GetEmployees',
+                    "type": "get",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "ArtistName" },
+                    { "data": "Genre" },
+                    { "data": "AlbumTitle" },
+                    {
+                        "data": "CDId", "width": "50px", "render": function (data) {
+                            return '<a class="popup" href="/home/save/' + data + '">Edit</a>';
+                        }
+                    },
+                    {
+                        "data": "CDId", "width": "50px", "render": function (data) {
+                            return '<a class="popup" href="/home/delete/' + data + '">Delete</a>';
+
+                        }
+                    }
+ 
+                ]
+            })
+        })
+
+       
+        $('.tablecontainer').on('click', 'a.popup', function (e) {
+            e.preventDefault();
+            OpenPopup($(this).attr('href'));
+        })
+        function OpenPopup(pageUrl) {
+            var $pageContent = $('<div/>');
+            $pageContent.load(pageUrl, function () {
+                $('#popupForm', $pageContent).removeData('validator');
+                $('#popupForm', $pageContent).removeData('unobtrusiveValidation');
+                $.validator.unobtrusive.parse('form');
+
+            });
+
+            $dialog = $('<div class="popupWindow" style="overflow:auto"></div>')
+                .html($pageContent)
+                .dialog({
+                    draggable: false,
+                    autoOpen: false,
+                    resizable: false,
+                    model: true,
+                    title: 'Popup Dialog',
+                    height: 550,
+                    width: 600,
+                    close: function () {
+                        $dialog.dialog('destroy').remove();
+                        Location.reload();
+                    }
+                })
+
+            $('.popupWindow').on('submit', '#popupForm', function (e) {
+                var url = $('#popupForm')[0].action;
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: $('#popupForm').serialize(),
+                    success: function (data) {
+                        if (data.status) {
+                            $dialog.dialog('close');
+                            oTable.ajax.reload();
+                        }
+                    }
+                })
+
+                e.preventDefault();
+            })
+
+            $dialog.dialog('open');
+        }
+    </script>
+</body>
+
+</html>

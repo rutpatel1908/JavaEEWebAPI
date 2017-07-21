@@ -1,0 +1,27 @@
+﻿@model QACDLibrary.Models.CD
+
+<h2>Insert CD</h2>
+@using (Html.BeginForm("insert", "home", FormMethod.Post, new { id = "popupForm" }))
+{
+
+    <div class="form-group">
+        <label>Artist Name</label>
+        @Html.TextBoxFor(a => a.ArtistName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(a => a.ArtistName)
+    </div>
+    <div class="form-group">
+        <label>Genre</label>
+        @Html.TextBoxFor(a => a.Genre, new { @class = "form-control" })
+        @Html.ValidationMessageFor(a => a.Genre)
+    </div>
+    <div class="form-group">
+        <label>Album Name</label>
+        @Html.TextBoxFor(a => a.AlbumTitle, new { @class = "form-control" })
+        @Html.ValidationMessageFor(a => a.AlbumTitle)
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}
+

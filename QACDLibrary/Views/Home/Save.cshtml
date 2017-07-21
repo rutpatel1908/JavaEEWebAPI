@@ -1,0 +1,31 @@
+﻿@model QACDLibrary.Models.CD
+
+<h2>Edit CD</h2>
+@using (Html.BeginForm("save", "home", FormMethod.Post, new { id = "popupForm" }))
+{
+    if (Model != null && Model.CDId > 0)
+    {
+        @Html.HiddenFor(a => a.CDId)
+    }
+         
+    <div class="form-group">
+        <label>Artist Name</label>
+        @Html.TextBoxFor(a => a.ArtistName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(a => a.ArtistName)
+    </div>
+    <div class="form-group">
+        <label>Genre</label>
+        @Html.TextBoxFor(a => a.Genre, new { @class = "form-control" })
+        @Html.ValidationMessageFor(a => a.Genre)
+    </div>
+    <div class="form-group">
+        <label>Album Name</label>
+        @Html.TextBoxFor(a => a.AlbumTitle, new { @class = "form-control" })
+        @Html.ValidationMessageFor(a => a.AlbumTitle)
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}
+

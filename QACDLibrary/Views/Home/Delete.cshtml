@@ -1,0 +1,25 @@
+﻿@model QACDLibrary.Models.CD
+
+<h2>Delete CD</h2>
+@using (Html.BeginForm("delete", "home", FormMethod.Post, new { id = "popupForm" }))
+{
+    @Html.HiddenFor(a => a.CDId)
+    <div class="form-group">
+        <label>Artist Name</label>
+        <p>@Model.ArtistName</p>
+    </div>
+
+    <div class="form-group">
+        <label>Genre</label>
+        <p>@Model.Genre</p>
+    </div>
+
+    <div class="form-group">
+        <label>Album Title</label>
+        <p>@Model.AlbumTitle</p>
+    </div>
+
+    <div>
+        <input type="submit" value="Delete" />
+    </div>
+}
